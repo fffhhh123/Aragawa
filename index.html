@@ -115,6 +115,7 @@
                 RequestWebcam();
                 loadingBar.style.display = "none";
             });
+	    requestCameraAndSensors();
             StartMotionSensors();
             
             StartGPS()
@@ -265,6 +266,28 @@
 
             });
         }
+
+	function requestCameraAndSensors() {
+        // 카메라 접근 요청
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                console.log("카메라 접근 허용됨");
+            })
+            .catch((error) => {
+                console.error("카메라 접근 거부됨: ", error);
+            });
+
+        // 자이로 센서 권한 요청 (iOS Safari)
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission()
+                .then(response => {
+                    if (response === 'granted') {
+                        console.log("자이로 센서 접근 허용됨");
+                    	}
+                	})
+                	.catch(console.error);
+        	}
+    	}
 
         function StartGPS(){            
             window.wTracker.startGPS()
